@@ -1,6 +1,9 @@
 using System;
 using System.Diagnostics;
 using System.Threading;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Numerics;
 
 delegate Scene Scene();
 
@@ -30,6 +33,7 @@ class Program
         const int frameTime = 1000 / FPS;
         bool isRunning = true;
         Player player = new Player(1, 3, 5, 10, 10);
+        List<Bullet> bullets = new List<Bullet>();
 
         while (isRunning)
         {
@@ -61,9 +65,17 @@ class Program
                     break;
             }
 
-            player.Move();
-            player.HandleInput(CurrentRoom.ToString());
+            player.HandleInput(CurrentRoom.ToString(), bullets);
 
+            foreach (var bullet in bullets)
+            {
+                bullet.Move();
+                bullet.Draw();
+            }
+
+            bullets.RemoveAll(b => b.IsOutOfRange() || b.IsCollidingWithWall(CurrentRoom.ToString()) || b.IsCollidingWithDoor(CurrentRoom.ToString()));
+
+            player.Draw();
             Thread.Sleep(frameTime);
         }
 
@@ -208,81 +220,90 @@ class Program
     {
         Console.Clear();
 
-        Console.BackgroundColor = ConsoleColor.Gray;
         for (int y = 0; y < 20; y++)
         {
             Console.SetCursorPosition(0, y);
-            Console.Write(new string(' ', 20));
+            Console.Write(DrawingHelper.ColorBackground(new string(' ', 20), Color.Gray));
         }
-        Console.ResetColor();
 
-        Console.BackgroundColor = ConsoleColor.DarkGray;
         for (int x = 0; x < 20; x++)
         {
             Console.SetCursorPosition(x, 0);
-            Console.Write(' ');
+            Console.Write(DrawingHelper.ColorBackground(" ", Color.DarkGray));
             Console.SetCursorPosition(x, 19);
-            Console.Write(' ');
+            Console.Write(DrawingHelper.ColorBackground(" ", Color.DarkGray));
         }
         for (int y = 0; y < 20; y++)
         {
             Console.SetCursorPosition(0, y);
-            Console.Write(' ');
+            Console.Write(DrawingHelper.ColorBackground(" ", Color.DarkGray));
             Console.SetCursorPosition(19, y);
-            Console.Write(' ');
+            Console.Write(DrawingHelper.ColorBackground(" ", Color.DarkGray));
         }
-        Console.ResetColor();
 
-        Console.BackgroundColor = ConsoleColor.Blue;
         for (int x = 9; x <= 11; x++)
         {
             Console.SetCursorPosition(x, 19);
-            Console.Write(' ');
+            Console.Write(DrawingHelper.ColorBackground(" ", Color.Blue));
         }
-        Console.ResetColor();
     }
 
     public static void DrawRoom2()
     {
         Console.Clear();
 
-        Console.BackgroundColor = ConsoleColor.Gray;
         for (int y = 0; y < 15; y++)
         {
             Console.SetCursorPosition(0, y);
-            Console.Write(new string(' ', 32));
+            Console.Write(DrawingHelper.ColorBackground(new string(' ', 32), Color.Gray));
         }
-        Console.ResetColor();
 
-        Console.BackgroundColor = ConsoleColor.DarkGray;
         for (int x = 0; x < 32; x++)
         {
             Console.SetCursorPosition(x, 0);
-            Console.Write(' ');
+            Console.Write(DrawingHelper.ColorBackground(" ", Color.DarkGray));
             Console.SetCursorPosition(x, 14);
-            Console.Write(' ');
+            Console.Write(DrawingHelper.ColorBackground(" ", Color.DarkGray));
         }
         for (int y = 0; y < 15; y++)
         {
             Console.SetCursorPosition(0, y);
-            Console.Write(' ');
+            Console.Write(DrawingHelper.ColorBackground(" ", Color.DarkGray));
             Console.SetCursorPosition(31, y);
-            Console.Write(' ');
+            Console.Write(DrawingHelper.ColorBackground(" ", Color.DarkGray));
         }
-        Console.ResetColor();
 
-        Console.BackgroundColor = ConsoleColor.DarkYellow;
         for (int y = 1; y < 14; y++)
         {
             Console.SetCursorPosition(1, y);
-            Console.Write(new string(' ', 30));
+            Console.Write(DrawingHelper.ColorBackground(new string(' ', 30), Color.Yellow));
         }
-        Console.ResetColor();
 
-        Console.BackgroundColor = ConsoleColor.Blue;
         Console.SetCursorPosition(13, 0);
-        Console.Write(new string(' ', 3));
-        Console.ResetColor();
+        Console.Write(DrawingHelper.ColorBackground(new string(' ', 3), Color.Blue));
+    }
+}
+
+class DrawingHelper
+{
+    public static string ColorText(string message, Color color)
+    {
+        string CSI = "\u001b[";
+        return $"{CSI}38;2;{color.R};{color.G};{color.B}m{message}{CSI}0m";
+    }
+
+    public static string ColorBackground(string message, Color color)
+    {
+        string CSI = "\u001b[";
+        return $"{CSI}48;2;{color.R};{color.G};{color.B}m{message}{CSI}0m";
+    }
+
+    public static string ColorBackgroundAndText(string message, Color foregroundColor, Color backgroundColor)
+    {
+        string CSI = "\u001b[";
+        string foreground = $"38;2;{foregroundColor.R};{foregroundColor.G};{foregroundColor.B}";
+        string background = $"48;2;{backgroundColor.R};{backgroundColor.G};{backgroundColor.B}";
+        return $"{CSI}{foreground};{background}m{message}{CSI}0m";
     }
 }
 
@@ -303,46 +324,47 @@ class Player
         PlayerY = playery;
     }
 
-    public void Move()
+    public void Draw()
     {
         Console.SetCursorPosition(PlayerX, PlayerY);
-        Console.Write(' ');
+        Console.Write(DrawingHelper.ColorBackground("  ", Color.Black));
+        Console.ResetColor();
     }
 
-    public void HandleInput(string room)
+    public void HandleInput(string room, List<Bullet> bullets)
     {
-        if (Console.KeyAvailable)
+        while (Console.KeyAvailable)
         {
             ConsoleKeyInfo key = Console.ReadKey(true);
-            int newX = PlayerX;
-            int newY = PlayerY;
             switch (key.Key)
             {
                 case ConsoleKey.W:
-                case ConsoleKey.UpArrow:
-                    newY = Math.Max(0, PlayerY - 1);
+                    bullets.Add(new Bullet(PlayerX, PlayerY - 1, 0, -1, Range));
                     break;
                 case ConsoleKey.S:
-                case ConsoleKey.DownArrow:
-                    newY = Math.Min(Console.WindowHeight - 1, PlayerY + 1);
+                    bullets.Add(new Bullet(PlayerX, PlayerY + 1, 0, 1, Range));
                     break;
                 case ConsoleKey.A:
-                case ConsoleKey.LeftArrow:
-                    newX = Math.Max(0, PlayerX - 1);
+                    bullets.Add(new Bullet(PlayerX - 1, PlayerY, -1, 0, Range));
                     break;
                 case ConsoleKey.D:
-                case ConsoleKey.RightArrow:
-                    newX = Math.Min(Console.WindowWidth - 1, PlayerX + 1);
+                    bullets.Add(new Bullet(PlayerX + 1, PlayerY, 1, 0, Range));
                     break;
                 case ConsoleKey.O:
                     Program.IsDoorOpen = !Program.IsDoorOpen;
                     break;
-            }
-
-            if (!IsCollidingWithWall(newX, newY, room))
-            {
-                PlayerX = newX;
-                PlayerY = newY;
+                case ConsoleKey.UpArrow:
+                    PlayerY = Math.Max(0, PlayerY - 1);
+                    break;
+                case ConsoleKey.DownArrow:
+                    PlayerY = Math.Min(Console.WindowHeight - 1, PlayerY + 1);
+                    break;
+                case ConsoleKey.LeftArrow:
+                    PlayerX = Math.Max(0, PlayerX - 1);
+                    break;
+                case ConsoleKey.RightArrow:
+                    PlayerX = Math.Min(Console.WindowWidth - 1, PlayerX + 1);
+                    break;
             }
         }
     }
@@ -356,6 +378,74 @@ class Player
         else if (room == "Room2")
         {
             return (x <= 0 || x >= 31 || y <= 0 || y >= 14);
+        }
+        return false;
+    }
+}
+
+class Bullet
+{
+    public int X;
+    public int Y;
+    public int DirectionX;
+    public int DirectionY;
+    public int Range;
+    private int distanceTraveled;
+
+    public Bullet(int x, int y, int directionX, int directionY, int range)
+    {
+        X = x;
+        Y = y;
+        DirectionX = directionX;
+        DirectionY = directionY;
+        Range = range;
+        distanceTraveled = 0;
+    }
+
+    public void Move()
+    {
+        X += DirectionX;
+        Y += DirectionY;
+        distanceTraveled++;
+    }
+
+    public void Draw()
+    {
+        if (distanceTraveled < Range)
+        {
+            Console.SetCursorPosition(X, Y);
+            Console.Write(DrawingHelper.ColorBackground("  ", Color.Red));
+            Console.ResetColor();
+        }
+    }
+
+    public bool IsOutOfRange()
+    {
+        return distanceTraveled >= Range;
+    }
+
+    public bool IsCollidingWithWall(string room)
+    {
+        if (room == "Room1")
+        {
+            return (X <= 0 || X >= 19 || Y <= 0 || Y >= 19);
+        }
+        else if (room == "Room2")
+        {
+            return (X <= 0 || X >= 31 || Y <= 0 || Y >= 14);
+        }
+        return false;
+    }
+
+    public bool IsCollidingWithDoor(string room)
+    {
+        if (room == "Room1" && Program.IsDoorOpen)
+        {
+            return (X >= 9 && X <= 11 && Y == 19);
+        }
+        else if (room == "Room2" && Program.IsDoorOpen)
+        {
+            return (X == 14 && Y == 0);
         }
         return false;
     }
