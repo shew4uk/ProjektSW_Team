@@ -1,0 +1,466 @@
+using System;
+using System.Diagnostics;
+using System.Threading;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Numerics;
+
+delegate Scene Scene();
+
+enum Room
+{
+    Room1,
+    Room2
+}
+
+class Prgram2
+{
+    public static Room CurrentRoom = Room.Room1;
+    public static bool IsDoorOpen = true;
+
+    public static void Main()
+    {
+        Scene sceneToRender = MenuScene();
+        while (sceneToRender != null)
+        {
+            sceneToRender = sceneToRender.Invoke();
+        }
+    }
+
+    public static Scene GameScene()
+    {
+        const int FPS = 30;
+        const int frameTime = 1000 / FPS;
+        bool isRunning = true;
+        Player player = new Player(1, 3, 5, 10, 10);
+        List<Bullet> bullets = new List<Bullet>();
+
+        // Додавання ворогів
+        List<Enemy> enemies = new List<Enemy>
+        {
+            new SkeletonWarrior(5, 5),
+            new SkeletonArcher(10, 10),
+            new FireMage(15, 8),
+            new DarkKnight(18, 3),
+            new DarkEnergy(7, 14)
+        };
+
+        while (isRunning)
+        {
+            // Чекаємо наступний кадр
+            Thread.Sleep(frameTime);
+
+            Console.Clear();
+
+            // Малюємо кімнату
+            switch (CurrentRoom)
+            {
+                case Room.Room1:
+                    DrawRoom1();
+                    break;
+                case Room.Room2:
+                    DrawRoom2();
+                    break;
+            }
+
+            // Перевірка дверей
+            switch (CurrentRoom)
+            {
+                case Room.Room1:
+                    if (IsDoorOpen && player.PlayerX >= 9 && player.PlayerX <= 11 && player.PlayerY == 18)
+                    {
+                        CurrentRoom = Room.Room2;
+                        player.PlayerX = 14;
+                        player.PlayerY = 2;
+                    }
+                    break;
+
+                case Room.Room2:
+                    if (IsDoorOpen && player.PlayerX == 14 && player.PlayerY == 1)
+                    {
+                        CurrentRoom = Room.Room1;
+                        player.PlayerX = 10;
+                        player.PlayerY = 17;
+                    }
+                    break;
+            }
+
+            // Оновлюємо гравця
+            player.HandleInput(bullets);
+
+            // Оновлюємо кулі
+            foreach (var bullet in bullets)
+            {
+                bullet.Move();
+            }
+            bullets.RemoveAll(b => b.IsOutOfRange());
+
+            // Малюємо гравця та кулі
+            player.Draw();
+            foreach (var bullet in bullets)
+            {
+                bullet.Draw();
+            }
+
+            // Логіка ворогів
+            foreach (var enemy in enemies)
+            {
+                enemy.MoveTowardsPlayer(player);
+                enemy.Draw();
+            }
+        }
+
+        return null;
+    }
+
+    public static Scene Info()
+    {
+        const int FPS = 60;
+        const int frameTime = 1000 / FPS;
+        bool isRunning = true;
+
+        while (isRunning)
+        {
+            Console.Clear();
+            Console.WriteLine("Information Scene");
+            Thread.Sleep(frameTime);
+        }
+
+        return null;
+    }
+
+    public static Scene MenuScene()
+    {
+        int boxSize = 32;
+        string[] menuButtons = new string[]
+        {
+            "Start",
+            "Info",
+            "Settings",
+            "Exit"
+        };
+        int selectedButtonIndex = 0;
+        bool isRunning = true;
+        double refreshRate = 1.0 / 15.0;
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.Start();
+
+        Console.CursorVisible = false;
+
+        while (isRunning)
+        {
+            if (stopwatch.Elapsed.TotalSeconds > refreshRate)
+            {
+                stopwatch.Restart();
+                selectedButtonIndex = Math.Clamp(selectedButtonIndex, 0, menuButtons.Length - 1);
+
+                Console.Clear();
+                PrintMessageNTimes("-", boxSize);
+                Console.WriteLine();
+                PrintSurrondedMessage("|", "Dungeons Of Demons", "|", boxSize);
+                Console.WriteLine();
+                PrintSurrondedMessage("|", "Created by: Shewchuks Team", "|", boxSize);
+                Console.WriteLine();
+                PrintMessageNTimes("-", boxSize);
+                Console.WriteLine();
+
+                for (int i = 0; i < menuButtons.Length; i++)
+                {
+                    if (i == selectedButtonIndex)
+                    {
+                        Console.BackgroundColor = ConsoleColor.Green;
+                        PrintSurrondedMessage("*", menuButtons[i], "*", boxSize);
+                        Console.ResetColor();
+                    }
+                    else
+                    {
+                        PrintSurrondedMessage("", menuButtons[i], "", boxSize);
+                    }
+                    Console.WriteLine();
+                }
+
+                if (Console.KeyAvailable)
+                {
+                    ConsoleKeyInfo key = Console.ReadKey(true);
+                    switch (key.Key)
+                    {
+                        case ConsoleKey.W:
+                        case ConsoleKey.UpArrow:
+                            selectedButtonIndex = (selectedButtonIndex - 1 + menuButtons.Length) % menuButtons.Length;
+                            break;
+                        case ConsoleKey.S:
+                        case ConsoleKey.DownArrow:
+                            selectedButtonIndex = (selectedButtonIndex + 1) % menuButtons.Length;
+                            break;
+                        case ConsoleKey.Enter:
+                            switch (selectedButtonIndex)
+                            {
+                                case 0:
+                                    return GameScene;
+                                case 1:
+                                    return Info;
+                                case 2:
+                                    Console.Clear();
+                                    Console.WriteLine("Settings Menu is not implemented yet.");
+                                    Thread.Sleep(1000);
+                                    break;
+                                case 3:
+                                    Ending(400);
+                                    isRunning = false;
+                                    break;
+                            }
+                            break;
+                    }
+                }
+            }
+        }
+
+        Console.WriteLine("Goodbye");
+        return null;
+    }
+
+    public static void PrintMessageNTimes(string message, int n)
+    {
+        Console.Write(new string(message[0], n));
+    }
+
+    public static void PrintSurrondedMessage(string before, string message, string after, int boxSize, double alignment = 0.5)
+    {
+        Console.Write(before);
+        boxSize = boxSize - (before.Length + after.Length);
+        int start = (int)((boxSize - message.Length) * alignment);
+        Console.Write(new string(' ', start));
+        Console.Write(message);
+        Console.Write(new string(' ', boxSize - start - message.Length));
+        Console.Write(after);
+    }
+
+    public static void Ending(int wait)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            Console.Clear();
+            Console.WriteLine("Please wait" + new string('.', i));
+            Thread.Sleep(wait);
+        }
+        Console.Clear();
+    }
+
+    public static void DrawRoom1()
+    {
+        Console.Clear();
+        for (int y = 0; y < 20; y++)
+        {
+            for (int x = 0; x < 20; x++)
+            {
+                if (y == 0 || y == 19 || x == 0 || x == 19)
+                {
+                    Console.SetCursorPosition(x, y);
+                    Console.Write('#');
+                }
+            }
+        }
+        Console.SetCursorPosition(9, 19);
+        Console.Write("===");
+    }
+
+    public static void DrawRoom2()
+    {
+        Console.Clear();
+        for (int y = 0; y < 15; y++)
+        {
+            Console.SetCursorPosition(0, y);
+            Console.Write(new string('#', 32));
+        }
+        Console.SetCursorPosition(13, 0);
+        Console.Write("==="); // Двері
+    }
+}
+
+// Гравець
+class Player
+{
+    public int Health { get; set; }
+    public int Speed { get; set; }
+    public int Damage { get; set; }
+    public int PlayerX { get; set; }
+    public int PlayerY { get; set; }
+
+    public Player(int health, int speed, int damage, int playerX, int playerY)
+    {
+        Health = health;
+        Speed = speed;
+        Damage = damage;
+        PlayerX = playerX;
+        PlayerY = playerY;
+    }
+
+    public void HandleInput(List<Bullet> bullets)
+    {
+        if (Console.KeyAvailable)
+        {
+            ConsoleKeyInfo key = Console.ReadKey(true);
+            switch (key.Key)
+            {
+                case ConsoleKey.W:
+                case ConsoleKey.UpArrow:
+                    PlayerY--;
+                    break;
+                case ConsoleKey.S:
+                case ConsoleKey.DownArrow:
+                    PlayerY++;
+                    break;
+                case ConsoleKey.A:
+                case ConsoleKey.LeftArrow:
+                    PlayerX--;
+                    break;
+                case ConsoleKey.D:
+                case ConsoleKey.RightArrow:
+                    PlayerX++;
+                    break;
+                case ConsoleKey.Spacebar:
+                    bullets.Add(new Bullet(PlayerX, PlayerY, 0, -1));
+                    break;
+            }
+        }
+    }
+
+    public void Draw()
+    {
+        Console.SetCursorPosition(PlayerX, PlayerY);
+        Console.Write("P");
+    }
+}
+
+// Куля
+class Bullet
+{
+    public int X { get; private set; }
+    public int Y { get; private set; }
+    private int VelocityX { get; set; }
+    private int VelocityY { get; set; }
+
+    public Bullet(int x, int y, int velocityX, int velocityY)
+    {
+        X = x;
+        Y = y;
+        VelocityX = velocityX;
+        VelocityY = velocityY;
+    }
+
+    public void Move()
+    {
+        X += VelocityX;
+        Y += VelocityY;
+    }
+
+    public bool IsOutOfRange()
+    {
+        return X < 0 || X >= 20 || Y < 0 || Y >= 20;
+    }
+
+    public void Draw()
+    {
+        Console.SetCursorPosition(X, Y);
+        Console.Write('*');
+    }
+}
+
+// Вороги
+abstract class Enemy
+{
+    public int X { get; set; }
+    public int Y { get; set; }
+
+    public Enemy(int x, int y)
+    {
+        X = x;
+        Y = y;
+    }
+
+    public abstract void MoveTowardsPlayer(Player player);
+    public abstract void Draw();
+}
+
+class SkeletonWarrior : Enemy
+{
+    public SkeletonWarrior(int x, int y) : base(x, y) { }
+
+    public override void MoveTowardsPlayer(Player player)
+    {
+        if (X < player.PlayerX) X++;
+        if (X > player.PlayerX) X--;
+        if (Y < player.PlayerY) Y++;
+        if (Y > player.PlayerY) Y--;
+    }
+
+    public override void Draw()
+    {
+        Console.SetCursorPosition(X, Y);
+        Console.Write("S");
+    }
+}
+
+class SkeletonArcher : Enemy
+{
+    public SkeletonArcher(int x, int y) : base(x, y) { }
+
+    public override void MoveTowardsPlayer(Player player)
+    {
+        // Додаємо свою логіку для пересування.
+    }
+
+    public override void Draw()
+    {
+        Console.SetCursorPosition(X, Y);
+        Console.Write("A");
+    }
+}
+
+class FireMage : Enemy
+{
+    public FireMage(int x, int y) : base(x, y) { }
+
+    public override void MoveTowardsPlayer(Player player)
+    {
+        // Додаємо свою логіку для пересування.
+    }
+
+    public override void Draw()
+    {
+        Console.SetCursorPosition(X, Y);
+        Console.Write("F");
+    }
+}
+
+class DarkKnight : Enemy
+{
+    public DarkKnight(int x, int y) : base(x, y) { }
+
+    public override void MoveTowardsPlayer(Player player)
+    {
+        // Додаємо свою логіку для пересування.
+    }
+
+    public override void Draw()
+    {
+        Console.SetCursorPosition(X, Y);
+        Console.Write("K");
+    }
+}
+
+class DarkEnergy : Enemy
+{
+    public DarkEnergy(int x, int y) : base(x, y) { }
+
+    public override void MoveTowardsPlayer(Player player)
+    {
+        // Додаємо свою логіку для пересування.
+    }
+
+    public override void Draw()
+    {
+        Console.SetCursorPosition(X, Y);
+        Console.Write("E");
+    }
+}
