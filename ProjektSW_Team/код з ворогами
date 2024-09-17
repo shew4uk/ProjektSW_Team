@@ -4,8 +4,6 @@ using System.Threading;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
-using FastConsole.Engine.Elements;
-using FastConsole.Engine.Core;
 
 delegate Scene Scene();
 
@@ -15,7 +13,7 @@ enum Room
     Room2
 }
 
-class Program
+class Prgram2
 {
     public static Room CurrentRoom = Room.Room1;
     public static bool IsDoorOpen = true;
@@ -47,60 +45,68 @@ class Program
             new DarkEnergy(7, 14)
         };
 
-        List<Element> elements = new List<Element>();
-        Canvas Rooms = new Canvas(new Size(1,1));
-        PlayerDrawer playerdrawer = new PlayerDrawer(player);
-        
-        Rooms.CellWidth = 1;
-        DrawRoom1(Rooms);
-
-        elements.Add(Rooms);
-        elements.Add(playerdrawer);
         while (isRunning)
         {
-            if (Time.TryUpdate())
+            // Чекаємо наступний кадр
+            Thread.Sleep(frameTime);
+
+            Console.Clear();
+
+            // Малюємо кімнату
+            switch (CurrentRoom)
             {
-                Element.UpdateAndRender(elements);
+                case Room.Room1:
+                    DrawRoom1();
+                    break;
+                case Room.Room2:
+                    DrawRoom2();
+                    break;
+            }
 
-                switch (CurrentRoom)
-                {
-                    case Room.Room1:
-                        if (IsDoorOpen && player.PlayerX >= 9 && player.PlayerX <= 11 && player.PlayerY == 18)
-                        {
-                            CurrentRoom = Room.Room2;
-                            player.PlayerX = 14;
-                            player.PlayerY = 2;
-                        }
-                        break;
+            // Перевірка дверей
+            switch (CurrentRoom)
+            {
+                case Room.Room1:
+                    if (IsDoorOpen && player.PlayerX >= 9 && player.PlayerX <= 11 && player.PlayerY == 18)
+                    {
+                        CurrentRoom = Room.Room2;
+                        player.PlayerX = 14;
+                        player.PlayerY = 2;
+                    }
+                    break;
 
-                    case Room.Room2:
-                        if (IsDoorOpen && player.PlayerX == 14 && player.PlayerY == 1)
-                        {
-                            CurrentRoom = Room.Room1;
-                            DrawRoom1(Rooms);
-                            player.PlayerX = 10;
-                            player.PlayerY = 17;
-                        }
-                        break;
-                }
+                case Room.Room2:
+                    if (IsDoorOpen && player.PlayerX == 14 && player.PlayerY == 1)
+                    {
+                        CurrentRoom = Room.Room1;
+                        player.PlayerX = 10;
+                        player.PlayerY = 17;
+                    }
+                    break;
+            }
 
-                player.HandleInput(CurrentRoom.ToString(), bullets);
+            // Оновлюємо гравця
+            player.HandleInput(bullets);
 
-                foreach (var bullet in bullets)
-                {
-                    bullet.Move();
-                }
+            // Оновлюємо кулі
+            foreach (var bullet in bullets)
+            {
+                bullet.Move();
+            }
+            bullets.RemoveAll(b => b.IsOutOfRange());
 
-                bullets.RemoveAll(b => b.IsOutOfRange() || b.IsCollidingWithWall(CurrentRoom.ToString()) || b.IsCollidingWithDoor(CurrentRoom.ToString()));
+            // Малюємо гравця та кулі
+            player.Draw();
+            foreach (var bullet in bullets)
+            {
+                bullet.Draw();
+            }
 
-                player.Draw();
-
-                // Логіка ворогів
-                foreach (var enemy in enemies)
-                {
-                    enemy.MoveTowardsPlayer(player);
-                    enemy.Draw();
-                }
+            // Логіка ворогів
+            foreach (var enemy in enemies)
+            {
+                enemy.MoveTowardsPlayer(player);
+                enemy.Draw();
             }
         }
 
@@ -240,69 +246,38 @@ class Program
         Console.Clear();
     }
 
-    public static void DrawRoom1(Canvas RoomF)
+    public static void DrawRoom1()
     {
-        RoomF.CanvasSize = new Size(20, 20);
-        RoomF.Fill(Color.DarkGray);
-        RoomF.FillRect(1, 1, 18, 18, Color.Gray);
-        RoomF.FillRect(8, 19, 4, 1, Color.Blue);
+        Console.Clear();
+        for (int y = 0; y < 20; y++)
+        {
+            for (int x = 0; x < 20; x++)
+            {
+                if (y == 0 || y == 19 || x == 0 || x == 19)
+                {
+                    Console.SetCursorPosition(x, y);
+                    Console.Write('#');
+                }
+            }
+        }
+        Console.SetCursorPosition(9, 19);
+        Console.Write("===");
     }
 
-    public static void DrawRoom2(Canvas RoomS)
+    public static void DrawRoom2()
     {
         Console.Clear();
         for (int y = 0; y < 15; y++)
         {
             Console.SetCursorPosition(0, y);
-            Console.Write(DrawingHelper.ColorBackground(new string(' ', 32), Color.Gray));
-        }
-        for (int x = 0; x < 32; x++)
-        {
-            Console.SetCursorPosition(x, 0);
-            Console.Write(DrawingHelper.ColorBackground(" ", Color.DarkGray));
-            Console.SetCursorPosition(x, 14);
-            Console.Write(DrawingHelper.ColorBackground(" ", Color.DarkGray));
-        }
-        for (int y = 0; y < 15; y++)
-        {
-            Console.SetCursorPosition(0, y);
-            Console.Write(DrawingHelper.ColorBackground(" ", Color.DarkGray));
-            Console.SetCursorPosition(31, y);
-            Console.Write(DrawingHelper.ColorBackground(" ", Color.DarkGray));
-        }
-        for (int y = 1; y < 14; y++)
-        {
-            Console.SetCursorPosition(1, y);
-            Console.Write(DrawingHelper.ColorBackground(new string(' ', 30), Color.Yellow));
+            Console.Write(new string('#', 32));
         }
         Console.SetCursorPosition(13, 0);
-        Console.Write(DrawingHelper.ColorBackground(new string(' ', 3), Color.Blue));
+        Console.Write("==="); // Двері
     }
 }
 
-class DrawingHelper
-{
-    public static string ColorText(string message, Color color)
-    {
-        string CSI = "\u001b[";
-        return $"{CSI}38;2;{color.R};{color.G};{color.B}m{message}{CSI}0m";
-    }
-
-    public static string ColorBackground(string message, Color color)
-    {
-        string CSI = "\u001b[";
-        return $"{CSI}48;2;{color.R};{color.G};{color.B}m{message}{CSI}0m";
-    }
-
-    public static string ColorBackgroundAndText(string message, Color foregroundColor, Color backgroundColor)
-    {
-        string CSI = "\u001b[";
-        string foreground = $"38;2;{foregroundColor.R};{foregroundColor.G};{foregroundColor.B}";
-        string background = $"48;2;{backgroundColor.R};{backgroundColor.G};{backgroundColor.B}";
-        return $"{CSI}{foreground};{background}m{message}{CSI}0m";
-    }
-}
-
+// Гравець
 class Player
 {
     public int Health { get; set; }
@@ -320,7 +295,7 @@ class Player
         PlayerY = playerY;
     }
 
-    public void HandleInput(string currentRoom, List<Bullet> bullets)
+    public void HandleInput(List<Bullet> bullets)
     {
         if (Console.KeyAvailable)
         {
@@ -344,7 +319,7 @@ class Player
                     PlayerX++;
                     break;
                 case ConsoleKey.Spacebar:
-                    bullets.Add(new Bullet(PlayerX, PlayerY, 0, -1, 5));
+                    bullets.Add(new Bullet(PlayerX, PlayerY, 0, -1));
                     break;
             }
         }
@@ -352,171 +327,140 @@ class Player
 
     public void Draw()
     {
-        Renderer.SetCursorPosition(PlayerX, PlayerY);
-        Renderer.Write("P", Color.Green);
+        Console.SetCursorPosition(PlayerX, PlayerY);
+        Console.Write("P");
     }
 }
 
+// Куля
 class Bullet
 {
-    public int BulletX { get; set; }
-    public int BulletY { get; set; }
-    public int DirectionX { get; set; }
-    public int DirectionY { get; set; }
-    public int Range { get; set; }
-    public int DistanceTraveled { get; set; }
+    public int X { get; private set; }
+    public int Y { get; private set; }
+    private int VelocityX { get; set; }
+    private int VelocityY { get; set; }
 
-    public Bullet(int bulletX, int bulletY, int directionX, int directionY, int range)
+    public Bullet(int x, int y, int velocityX, int velocityY)
     {
-        BulletX = bulletX;
-        BulletY = bulletY;
-        DirectionX = directionX;
-        DirectionY = directionY;
-        Range = range;
-        DistanceTraveled = 0;
+        X = x;
+        Y = y;
+        VelocityX = velocityX;
+        VelocityY = velocityY;
     }
 
     public void Move()
     {
-        BulletX += DirectionX;
-        BulletY += DirectionY;
-        DistanceTraveled++;
+        X += VelocityX;
+        Y += VelocityY;
     }
 
     public bool IsOutOfRange()
     {
-        return DistanceTraveled >= Range;
-    }
-
-    public bool IsCollidingWithWall(string room)
-    {
-        // Додаємо логіку для перевірки стін
-        return false;
-    }
-
-    public bool IsCollidingWithDoor(string room)
-    {
-        // Додаємо логіку для перевірки дверей
-        return false;
+        return X < 0 || X >= 20 || Y < 0 || Y >= 20;
     }
 
     public void Draw()
     {
-        Renderer.SetCursorPosition(BulletX, BulletY);
-        Renderer.Write(".", Color.Yellow);
+        Console.SetCursorPosition(X, Y);
+        Console.Write('*');
     }
 }
 
-class PlayerDrawer : Element
+// Вороги
+abstract class Enemy
 {
-    public Player player;
+    public int X { get; set; }
+    public int Y { get; set; }
 
-    public PlayerDrawer(Player p)
+    public Enemy(int x, int y)
     {
-        player = p;
+        X = x;
+        Y = y;
     }
 
-    public override void Update()
-    {
-
-    }
-
-    public override void Render()
-    {
-        player.Draw();
-    }
+    public abstract void MoveTowardsPlayer(Player player);
+    public abstract void Draw();
 }
 
-// Додаємо ворогів
-class Enemy
-{
-    public int Health { get; set; }
-    public int Damage { get; set; }
-    public int EnemyX { get; set; }
-    public int EnemyY { get; set; }
-    public string Type { get; set; }
-
-    public Enemy(int health, int damage, int x, int y, string type)
-    {
-        Health = health;
-        Damage = damage;
-        EnemyX = x;
-        EnemyY = y;
-        Type = type;
-    }
-
-    public void MoveTowardsPlayer(Player player)
-    {
-        if (EnemyX < player.PlayerX) EnemyX++;
-        else if (EnemyX > player.PlayerX) EnemyX--;
-
-        if (EnemyY < player.PlayerY) EnemyY++;
-        else if (EnemyY > player.PlayerY) EnemyY--;
-    }
-
-    public void Draw()
-    {
-        Renderer.SetCursorPosition(EnemyX, EnemyY);
-        Renderer.Write("E", Color.Red);
-    }
-}
-
-// Конкретні вороги
 class SkeletonWarrior : Enemy
 {
-    public SkeletonWarrior(int x, int y) : base(30, 5, x, y, "Skeleton Warrior") { }
+    public SkeletonWarrior(int x, int y) : base(x, y) { }
+
+    public override void MoveTowardsPlayer(Player player)
+    {
+        if (X < player.PlayerX) X++;
+        if (X > player.PlayerX) X--;
+        if (Y < player.PlayerY) Y++;
+        if (Y > player.PlayerY) Y--;
+    }
+
+    public override void Draw()
+    {
+        Console.SetCursorPosition(X, Y);
+        Console.Write("S");
+    }
 }
 
 class SkeletonArcher : Enemy
 {
-    public SkeletonArcher(int x, int y) : base(20, 3, x, y, "Skeleton Archer") { }
+    public SkeletonArcher(int x, int y) : base(x, y) { }
 
-    public void Shoot(Player player, List<Bullet> bullets)
+    public override void MoveTowardsPlayer(Player player)
     {
-        bullets.Add(new Bullet(EnemyX, EnemyY, player.PlayerX - EnemyX, player.PlayerY - EnemyY, 5));
+        // Додаємо свою логіку для пересування.
+    }
+
+    public override void Draw()
+    {
+        Console.SetCursorPosition(X, Y);
+        Console.Write("A");
     }
 }
 
 class FireMage : Enemy
 {
-    public FireMage(int x, int y) : base(25, 8, x, y, "Fire Mage") { }
+    public FireMage(int x, int y) : base(x, y) { }
 
-    public void CastFireball(Player player, List<Bullet> bullets)
+    public override void MoveTowardsPlayer(Player player)
     {
-        bullets.Add(new Bullet(EnemyX, EnemyY, player.PlayerX - EnemyX, player.PlayerY - EnemyY, 7));
+        // Додаємо свою логіку для пересування.
+    }
+
+    public override void Draw()
+    {
+        Console.SetCursorPosition(X, Y);
+        Console.Write("F");
     }
 }
 
 class DarkKnight : Enemy
 {
-    public DarkKnight(int x, int y) : base(50, 10, x, y, "Dark Knight") { }
+    public DarkKnight(int x, int y) : base(x, y) { }
+
+    public override void MoveTowardsPlayer(Player player)
+    {
+        // Додаємо свою логіку для пересування.
+    }
+
+    public override void Draw()
+    {
+        Console.SetCursorPosition(X, Y);
+        Console.Write("K");
+    }
 }
 
 class DarkEnergy : Enemy
 {
-    public DarkEnergy(int x, int y) : base(15, 6, x, y, "Dark Energy") { }
+    public DarkEnergy(int x, int y) : base(x, y) { }
 
-    public void DrainPlayer(Player player)
+    public override void MoveTowardsPlayer(Player player)
     {
-        player.Health -= 2;
-    }
-}
-
-// Renderer class
-class Renderer
-{
-    public static void SetCursorPosition(int x, int y)
-    {
-        Console.SetCursorPosition(x, y);
+        // Додаємо свою логіку для пересування.
     }
 
-    public static void Write(string content, Color color)
+    public override void Draw()
     {
-        Console.Write(DrawingHelper.ColorText(content, color));
-    }
-
-    public static void Write(string content, Color color, Color background)
-    {
-        Console.Write(DrawingHelper.ColorBackgroundAndText(content, color, background));
+        Console.SetCursorPosition(X, Y);
+        Console.Write("E");
     }
 }
