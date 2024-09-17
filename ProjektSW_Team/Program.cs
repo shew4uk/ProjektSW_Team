@@ -38,13 +38,13 @@ class Program
         List<Bullet> bullets = new List<Bullet>();
 
         List<Element> elements = new List<Element>();
-        Canvas Rooms = new Canvas(new Size(1,1));
+        Canvas Rooms = new Canvas(new Size(1, 1));
         PlayerDrawer playerdrawer = new PlayerDrawer(player);
-        
+
         Rooms.CellWidth = 1;
         DrawRoom1(Rooms);
 
-        
+
         elements.Add(Rooms);
         elements.Add(playerdrawer);
         while (isRunning)
@@ -93,7 +93,7 @@ class Program
 
                 player.Draw();
             }
-            
+
         }
 
         return null;
@@ -240,7 +240,7 @@ class Program
         RoomF.FillRect(1, 1, 18, 18, Color.Gray);
         RoomF.FillRect(8, 19, 4, 1, Color.Blue);
 
-        
+
     }
 
     public static void DrawRoom2(Canvas RoomS)
@@ -322,7 +322,7 @@ class Player
     public void Draw()
     {
         Renderer.SetCursorPosition(PlayerX, PlayerY);
-        Renderer.Write("  ",background: Color.Black);
+        Renderer.Write("  ", background: Color.Black);
 
     }
 
@@ -444,7 +444,7 @@ class Bullet
         }
         return false;
     }
-    
+
 }
 class PlayerDrawer : Element
 {
@@ -456,7 +456,7 @@ class PlayerDrawer : Element
     }
     public override void Update()
     {
-        Position = new Point(Player.PlayerX, Player.PlayerY);       
+        Position = new Point(Player.PlayerX, Player.PlayerY);
     }
     protected override void OnRender()
     {
