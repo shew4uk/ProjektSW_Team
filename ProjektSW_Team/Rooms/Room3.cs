@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace ProjektSW_Team.Rooms
 {
-    internal class Room2 : Room
+    internal class Room3 : Room
     {
-        public Room2() : base()
+        public Room3() : base()
         {
-            doors.Add(new Door() { Position = new Point(8, 0), Size = new Size(4, 1), Room = typeof(Room1), PlayerX = 9 , PlayerY = 18});
-            doors.Add(new Door() { Position = new Point(8, 19), Size = new Size(4, 1), Room = typeof(Room3), PlayerX = 9, PlayerY = 1 });
+            doors.Add(new Door() { Position = new Point(8, 0), Size = new Size(4, 1), Room = typeof(Room2), PlayerX = 9, PlayerY = 18 });
+
         }
         public override void DrawRoom(Canvas Rooms)
         {
