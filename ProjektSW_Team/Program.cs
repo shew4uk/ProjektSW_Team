@@ -6,18 +6,16 @@ using System.Drawing;
 using System.Numerics;
 using FastConsole.Engine.Elements;
 using FastConsole.Engine.Core;
+using ProjektSW_Team;
+using ProjektSW_Team.Rooms;
 
 delegate Scene Scene();
 
-enum Room
-{
-    Room1,
-    Room2
-}
+
 
 class Program
 {
-    public static Room CurrentRoom = Room.Room1;
+    public static TheWorld World;
     public static bool IsDoorOpen = true;
 
     public static void Main()
@@ -31,18 +29,22 @@ class Program
 
     public static Scene GameScene()
     {
+        World = new TheWorld();
+        World.SwitchRoom(typeof(Room1));
         const int FPS = 30;
         const int frameTime = 1000 / FPS;
         bool isRunning = true;
-        Player player = new Player(1, 3, 5, 10, 10);
+        Player player = World.Player;
         List<Bullet> bullets = new List<Bullet>();
 
         List<Element> elements = new List<Element>();
         Canvas Rooms = new Canvas(new Size(1, 1));
         PlayerDrawer playerdrawer = new PlayerDrawer(player);
+        elements.Add(World);
 
         Rooms.CellWidth = 1;
-        DrawRoom1(Rooms);
+        
+        
 
 
         elements.Add(Rooms);
@@ -55,33 +57,9 @@ class Program
                 Element.UpdateAndRender(elements);
                 //Console.WriteLine("Game Scene");
 
-                switch (CurrentRoom)
-                {
-                    case Room.Room1:
 
 
-                        if (IsDoorOpen && player.PlayerX >= 9 && player.PlayerX <= 11 && player.PlayerY == 18)
-                        {
-                            CurrentRoom = Room.Room2;
-                            player.PlayerX = 14;
-                            player.PlayerY = 2;
-                        }
-                        break;
-
-                    case Room.Room2:
-                        //DrawRoom2();
-
-                        if (IsDoorOpen && player.PlayerX == 14 && player.PlayerY == 1)
-                        {
-                            CurrentRoom = Room.Room1;
-                            DrawRoom1(Rooms);
-                            player.PlayerX = 10;
-                            player.PlayerY = 17;
-                        }
-                        break;
-                }
-
-                player.HandleInput(CurrentRoom.ToString(), bullets);
+                player.HandleInput(World.CurrentRoom);
 
                 foreach (var bullet in bullets)
                 {
@@ -89,7 +67,7 @@ class Program
                     //bullet.Draw();
                 }
 
-                bullets.RemoveAll(b => b.IsOutOfRange() || b.IsCollidingWithWall(CurrentRoom.ToString()) || b.IsCollidingWithDoor(CurrentRoom.ToString()));
+                // bullets.RemoveAll(b => b.IsOutOfRange() || b.IsCollidingWithWall(CurrentRoom.ToString()) || b.IsCollidingWithDoor(CurrentRoom.ToString()));
 
                 player.Draw();
             }
@@ -233,76 +211,14 @@ class Program
         Console.Clear();
     }
 
-    public static void DrawRoom1(Canvas RoomF)
-    {
-        RoomF.CanvasSize = new Size(20, 20);
-        RoomF.Fill(Color.DarkGray);
-        RoomF.FillRect(1, 1, 18, 18, Color.Gray);
-        RoomF.FillRect(8, 19, 4, 1, Color.Blue);
 
 
-    }
 
-    public static void DrawRoom2(Canvas RoomS)
-    {
-        Console.Clear();
-
-        for (int y = 0; y < 15; y++)
-        {
-            Console.SetCursorPosition(0, y);
-            Console.Write(DrawingHelper.ColorBackground(new string(' ', 32), Color.Gray));
-        }
-
-        for (int x = 0; x < 32; x++)
-        {
-            Console.SetCursorPosition(x, 0);
-            Console.Write(DrawingHelper.ColorBackground(" ", Color.DarkGray));
-            Console.SetCursorPosition(x, 14);
-            Console.Write(DrawingHelper.ColorBackground(" ", Color.DarkGray));
-        }
-        for (int y = 0; y < 15; y++)
-        {
-            Console.SetCursorPosition(0, y);
-            Console.Write(DrawingHelper.ColorBackground(" ", Color.DarkGray));
-            Console.SetCursorPosition(31, y);
-            Console.Write(DrawingHelper.ColorBackground(" ", Color.DarkGray));
-        }
-
-        for (int y = 1; y < 14; y++)
-        {
-            Console.SetCursorPosition(1, y);
-            Console.Write(DrawingHelper.ColorBackground(new string(' ', 30), Color.Yellow));
-        }
-
-        Console.SetCursorPosition(13, 0);
-        Console.Write(DrawingHelper.ColorBackground(new string(' ', 3), Color.Blue));
-    }
 }
 
-class DrawingHelper
-{
-    public static string ColorText(string message, Color color)
-    {
-        string CSI = "\u001b[";
-        return $"{CSI}38;2;{color.R};{color.G};{color.B}m{message}{CSI}0m";
-    }
 
-    public static string ColorBackground(string message, Color color)
-    {
-        string CSI = "\u001b[";
-        return $"{CSI}48;2;{color.R};{color.G};{color.B}m{message}{CSI}0m";
-    }
 
-    public static string ColorBackgroundAndText(string message, Color foregroundColor, Color backgroundColor)
-    {
-        string CSI = "\u001b[";
-        string foreground = $"38;2;{foregroundColor.R};{foregroundColor.G};{foregroundColor.B}";
-        string background = $"48;2;{backgroundColor.R};{backgroundColor.G};{backgroundColor.B}";
-        return $"{CSI}{foreground};{background}m{message}{CSI}0m";
-    }
-}
-
-class Player
+class Player 
 {
     public int Health;
     public int Damage;
@@ -326,25 +242,14 @@ class Player
 
     }
 
-    public void HandleInput(string room, List<Bullet> bullets)
+    public void HandleInput(Room Room)
     {
         while (Console.KeyAvailable)
         {
             ConsoleKeyInfo key = Console.ReadKey(true);
             switch (key.Key)
             {
-                case ConsoleKey.W:
-                    bullets.Add(new Bullet(PlayerX, PlayerY - 1, 0, -1, Range));
-                    break;
-                case ConsoleKey.S:
-                    bullets.Add(new Bullet(PlayerX, PlayerY + 1, 0, 1, Range));
-                    break;
-                case ConsoleKey.A:
-                    bullets.Add(new Bullet(PlayerX - 1, PlayerY, -1, 0, Range));
-                    break;
-                case ConsoleKey.D:
-                    bullets.Add(new Bullet(PlayerX + 1, PlayerY, 1, 0, Range));
-                    break;
+                
                 case ConsoleKey.O:
                     Program.IsDoorOpen = !Program.IsDoorOpen;
                     break;
@@ -364,18 +269,7 @@ class Player
         }
     }
 
-    private bool IsCollidingWithWall(int x, int y, string room)
-    {
-        if (room == "Room1")
-        {
-            return (x <= 0 || x >= 19 || y <= 0 || y >= 19);
-        }
-        else if (room == "Room2")
-        {
-            return (x <= 0 || x >= 31 || y <= 0 || y >= 14);
-        }
-        return false;
-    }
+
 }
 
 class Bullet
@@ -404,46 +298,16 @@ class Bullet
         distanceTraveled++;
     }
 
-    public void Draw()
-    {
-        if (distanceTraveled < Range)
-        {
-            Console.SetCursorPosition(X, Y);
-            Console.Write(DrawingHelper.ColorBackground("  ", Color.Red));
-            Console.ResetColor();
-        }
-    }
+
 
     public bool IsOutOfRange()
     {
         return distanceTraveled >= Range;
     }
 
-    public bool IsCollidingWithWall(string room)
-    {
-        if (room == "Room1")
-        {
-            return (X <= 0 || X >= 19 || Y <= 0 || Y >= 19);
-        }
-        else if (room == "Room2")
-        {
-            return (X <= 0 || X >= 31 || Y <= 0 || Y >= 14);
-        }
-        return false;
-    }
 
-    public bool IsCollidingWithDoor(string room)
-    {
-        if (room == "Room1" && Program.IsDoorOpen)
-        {
-            return (X >= 9 && X <= 11 && Y == 19);
-        }
-        else if (room == "Room2" && Program.IsDoorOpen)
-        {
-            return (X == 14 && Y == 0);
-        }
-        return false;
-    }
+
+
 
 }
 class PlayerDrawer : Element
