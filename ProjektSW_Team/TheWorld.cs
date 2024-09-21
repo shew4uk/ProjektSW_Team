@@ -27,6 +27,9 @@ namespace ProjektSW_Team
             Rooms.Add(typeof(Room2), new Room2());
             Rooms.Add(typeof (Room3), new Room3());
             Rooms.Add(typeof(Room3_1), new Room3_1());
+            Rooms.Add(typeof(Room4), new Room4());
+            Rooms.Add(typeof(Room3_2), new Room3_2());
+
             Player = new Player(1, 3, 5, 10, 10);
             PlayerDrawer = new PlayerDrawer(Player);
         } 
