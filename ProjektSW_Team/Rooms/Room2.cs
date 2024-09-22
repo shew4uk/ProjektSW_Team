@@ -23,8 +23,8 @@ namespace ProjektSW_Team.Rooms
 
             Rooms.FillRect(20, 0, 40, 9, Color.Black);
             Rooms.FillRect(0, 20, 42, 9, Color.Black);
-            Rooms.FillRect(1, 1, 18, 18, Color.GreenYellow);
-            Rooms.FillRect(1, 10, 39, 9, Color.GreenYellow);
+            Rooms.FillRect(1, 1, 18, 18, Color.DarkOliveGreen);
+            Rooms.FillRect(1, 10, 39, 9, Color.DarkOliveGreen);
         }
     }
 }

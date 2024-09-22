@@ -19,7 +19,7 @@ namespace ProjektSW_Team.Rooms
         {
             Rooms.CanvasSize = new Size(20, 20);
             Rooms.Fill(Color.DarkGray);
-            Rooms.FillRect(1, 1, 18, 18, Color.GreenYellow);
+            Rooms.FillRect(1, 1, 18, 18, Color.DarkOliveGreen);
         }
     }
 }
