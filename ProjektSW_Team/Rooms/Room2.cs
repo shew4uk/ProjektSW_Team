@@ -12,9 +12,9 @@ namespace ProjektSW_Team.Rooms
     {
         public Room2() : base()
         {
-            doors.Add(new Door() { Position = new Point(8, 0), Size = new Size(4, 1), Room = typeof(Room1), PlayerX = 9 , PlayerY = 18});
-            doors.Add(new Door() { Position = new Point(8, 19), Size = new Size(4, 1), Room = typeof(Room3), PlayerX = 29, PlayerY = 1 });
-            doors.Add(new Door() { Position = new Point(40, 13), Size = new Size(2, 3), Room = typeof(Room3_1), PlayerX = 2, PlayerY = 5 });
+            Objects.Add(new Door() { Position = new Point(8, 0), Size = new Size(4, 1), Room = typeof(Room1), PlayerX = 9 , PlayerY = 18});
+            Objects.Add(new Door() { Position = new Point(8, 19), Size = new Size(4, 1), Room = typeof(Room3), PlayerX = 29, PlayerY = 1 });
+            Objects.Add(new Door() { Position = new Point(40, 13), Size = new Size(2, 3), Room = typeof(Room3_1), PlayerX = 2, PlayerY = 5 });
         }
         public override void DrawRoom(Canvas Rooms)
         {

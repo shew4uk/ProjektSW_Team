@@ -15,7 +15,7 @@ delegate Scene Scene();
 
 class Program
 {
-    public static TheWorld World;
+
     public static bool IsDoorOpen = true;
 
     public static void Main()
@@ -29,18 +29,19 @@ class Program
 
     public static Scene GameScene()
     {
-        World = new TheWorld();
-        World.SwitchRoom(typeof(Room1));
+
+        TheWorld TWI  = new TheWorld();
+        TWI.SwitchRoom(typeof(Room1));
         const int FPS = 30;
         const int frameTime = 1000 / FPS;
         bool isRunning = true;
-        Player player = World.Player;
-        List<Bullet> bullets = new List<Bullet>();
+        Player player = TWI.Player;
+
 
         List<Element> elements = new List<Element>();
         Canvas Rooms = new Canvas(new Size(1, 1));
-        PlayerDrawer playerdrawer = new PlayerDrawer(player);
-        elements.Add(World);
+
+        elements.Add(TWI);
 
         Rooms.CellWidth = 1;
         
@@ -48,28 +49,23 @@ class Program
 
 
         elements.Add(Rooms);
-        elements.Add(playerdrawer);
+
         while (isRunning)
         {
             if (Time.TryUpdate())
             {
 
                 Element.UpdateAndRender(elements);
-                //Console.WriteLine("Game Scene");
+                
 
 
 
-                player.HandleInput(World.CurrentRoom);
+                
 
-                foreach (var bullet in bullets)
-                {
-                    bullet.Move();
-                    //bullet.Draw();
-                }
+                
+                
 
-                // bullets.RemoveAll(b => b.IsOutOfRange() || b.IsCollidingWithWall(CurrentRoom.ToString()) || b.IsCollidingWithDoor(CurrentRoom.ToString()));
-
-                player.Draw();
+                
             }
 
         }
@@ -218,114 +214,3 @@ class Program
 
 
 
-class Player 
-{
-    public int Health;
-    public int Damage;
-    public int Range;
-    public int PlayerX;
-    public int PlayerY;
-
-    public Player(int health, int damage, int range, int playerx, int playery)
-    {
-        Health = health;
-        Damage = damage;
-        Range = range;
-        PlayerX = playerx;
-        PlayerY = playery;
-    }
-
-    public void Draw()
-    {
-        Renderer.SetCursorPosition(PlayerX, PlayerY);
-        Renderer.Write("  ", background: Color.Black);
-
-    }
-
-    public void HandleInput(Room Room)
-    {
-        while (Console.KeyAvailable)
-        {
-            ConsoleKeyInfo key = Console.ReadKey(true);
-            switch (key.Key)
-            {
-                
-                case ConsoleKey.O:
-                    Program.IsDoorOpen = !Program.IsDoorOpen;
-                    break;
-                case ConsoleKey.UpArrow:
-                    PlayerY = Math.Max(0, PlayerY - 1);
-                    break;
-                case ConsoleKey.DownArrow:
-                    PlayerY = Math.Min(Console.WindowHeight - 1, PlayerY + 1);
-                    break;
-                case ConsoleKey.LeftArrow:
-                    PlayerX = Math.Max(0, PlayerX - 1);
-                    break;
-                case ConsoleKey.RightArrow:
-                    PlayerX = Math.Min(Console.WindowWidth - 1, PlayerX + 1);
-                    break;
-            }
-        }
-    }
-
-
-}
-
-class Bullet
-{
-    public int X;
-    public int Y;
-    public int DirectionX;
-    public int DirectionY;
-    public int Range;
-    private int distanceTraveled;
-
-    public Bullet(int x, int y, int directionX, int directionY, int range)
-    {
-        X = x;
-        Y = y;
-        DirectionX = directionX;
-        DirectionY = directionY;
-        Range = range;
-        distanceTraveled = 0;
-    }
-
-    public void Move()
-    {
-        X += DirectionX;
-        Y += DirectionY;
-        distanceTraveled++;
-    }
-
-
-
-    public bool IsOutOfRange()
-    {
-        return distanceTraveled >= Range;
-    }
-
-
-
-
-
-}
-class PlayerDrawer : Element
-{
-    public Player Player { get; set; }
-    public PlayerDrawer(Player player)
-    {
-        Player = player;
-
-    }
-    public override void Update()
-    {
-        Position = new Point(Player.PlayerX, Player.PlayerY);
-    }
-    protected override void OnRender()
-    {
-        Renderer.Write("  ", background: Color.Black);
-
-
-    }
-}

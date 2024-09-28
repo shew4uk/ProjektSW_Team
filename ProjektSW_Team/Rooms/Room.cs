@@ -8,9 +8,13 @@ using System.Drawing;
 
 namespace ProjektSW_Team.Rooms
 {
+    
     abstract class Room : Element
     {
-        public List<Door> doors = new List<Door>();
+
+        public Size WorldSize => Canvas.CanvasSize;
+        public List<IObject> Objects = new List<IObject>();
+        
         
 
 
@@ -21,21 +25,33 @@ namespace ProjektSW_Team.Rooms
             Canvas.CellWidth = 1;
             DrawRoom(Canvas);
         }
+
+        public bool IsPointInsideMap(Point point)
+        {
+            if (point.X < 1 || point.Y < 1)
+                return false;
+
+            if (point.X >= WorldSize.Width - 1 || point.Y >= WorldSize.Height - 1)
+                return false;
+
+            return true;
+        }
+
         protected override void OnRender()
         {
             Canvas.Render();
-            foreach (Door door in doors)
+            foreach (IObject @object in Objects)
             {
-                door.Render();
+                @object.Render();
             } 
             
         }
         public override void Update()
         {
             Canvas?.Update();
-            foreach (Door door in doors)
+            foreach (IObject @object in Objects)
             {
-                door.Update();
+                @object.Update();
             }
 
         }

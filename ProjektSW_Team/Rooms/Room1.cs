@@ -13,8 +13,13 @@ namespace ProjektSW_Team.Rooms
     {
         public Room1() : base()
         {
-            doors.Add(new Door() { Position = new Point(8,19), Size = new Size(4,1), Room = typeof(Room2), PlayerX = 9, PlayerY = 1});
-            
+            Objects.Add(new Door() { Position = new Point(8,19), Size = new Size(4,1), Room = typeof(Room2), PlayerX = 9, PlayerY = 1});
+            Objects.Add(new Trap() { Position = new Point(7, 5), Size = new Size(2, 1) });
+            Objects.Add(new Obstacle(new Size(2,1), Color.SaddleBrown) {Position = new Point (9, 5)});
+            Objects.Add(new Obstacle(new Size(20, 1), Color.DarkGray) { Position = new Point(0, 0) });
+
+
+
         }
         public override void DrawRoom(Canvas Rooms)
         {

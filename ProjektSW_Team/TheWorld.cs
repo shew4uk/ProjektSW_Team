@@ -2,6 +2,7 @@
 using ProjektSW_Team.Rooms;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,13 +14,14 @@ namespace ProjektSW_Team
         private Dictionary<Type, Room> Rooms = new Dictionary<Type, Room>();
         public Room CurrentRoom { get; set; }
         public Player Player { get; set; }
-        private PlayerDrawer PlayerDrawer { get; set; }
+        public static TheWorld Instance { get; private set; }
+     
 
         public void UseTP(Door door)
         {
             SwitchRoom(door.Room);
-            Player.PlayerX = door.PlayerX;
-            Player.PlayerY = door.PlayerY;
+            Player.Position = new Point(door.PlayerX, door.PlayerY);
+            
         }
         public TheWorld ()  // Нову кімнату сюда
         { 
@@ -29,9 +31,12 @@ namespace ProjektSW_Team
             Rooms.Add(typeof(Room3_1), new Room3_1());
             Rooms.Add(typeof(Room4), new Room4());
             Rooms.Add(typeof(Room3_2), new Room3_2());
+            Instance = this;
 
-            Player = new Player(1, 3, 5, 10, 10);
-            PlayerDrawer = new PlayerDrawer(Player);
+            Player = new Player();
+
+
+
         } 
         public void SwitchRoom(Type roomType)
         {
@@ -39,21 +44,34 @@ namespace ProjektSW_Team
         }
         public override void Update()
         {
+
             CurrentRoom.Update();
-            PlayerDrawer.Update();
-            foreach(Door door in CurrentRoom.doors)
+            Player.Update();
+            if (IsIntersectingObject(Player.Position,true, out IObject target))
             {
-                if (Player.PlayerX >= door.Position.X && Player.PlayerY >= door.Position.Y && Player.PlayerX < door.Position.X + door.Size.Width && Player.PlayerY < door.Position.Y + door.Size.Height)
+                target.Action();
+            }
+            
+        }
+
+        public bool IsIntersectingObject(Point Position,bool IsWalkable, out IObject Target)
+        {
+            foreach (IObject @object in CurrentRoom.Objects.Where(@object => @object.CanWalk == IsWalkable))
+            {
+                if (Position.X >= @object.Position.X && Position.Y >= @object.Position.Y && Position.X < @object.Position.X + @object.Size.Width && Position.Y < @object.Position.Y + @object.Size.Height)
                 {
-                    UseTP(door);
+                    Target = @object;
+                    return true;
                 }
             }
+            Target = null; 
+            return false;
         }
 
         protected override void OnRender()
         {
             CurrentRoom.Render();
-            PlayerDrawer.Render();
+            Player.Render();
             
         }
     }

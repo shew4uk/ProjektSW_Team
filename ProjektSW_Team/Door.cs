@@ -8,14 +8,15 @@ using System.Threading.Tasks;
 
 namespace ProjektSW_Team
 {
-    internal class Door : Element
+    internal class Door : Element, IObject
     {
         public Canvas Canvas { get; set; }
         public int PlayerX { get; set; }
         public int PlayerY { get; set; }
         public Type Room {  get; set; }
+        public bool CanWalk { get; set; } = true;
 
-        
+
         public override void Update()
         {
             Canvas.CanvasSize = Size;
@@ -32,6 +33,11 @@ namespace ProjektSW_Team
         protected override void OnRender()
         {
             Canvas.Render();
+        }
+
+        public void Action()
+        {
+            TheWorld.Instance.UseTP(this);
         }
     }
 }
