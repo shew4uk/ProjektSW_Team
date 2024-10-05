@@ -11,4 +11,8 @@
     <ProjectReference Include="..\FastConsole\FastConsole.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Elementss\" />
+  </ItemGroup>
+
 </Project>
