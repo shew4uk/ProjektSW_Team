@@ -40,8 +40,9 @@ namespace ProjektSW_Team.Rooms
         protected override void OnRender()
         {
             Canvas.Render();
-            foreach (IObject @object in Objects)
+            for (int i = 0; i < Objects.Count; i++)
             {
+                IObject @object = Objects[i];
                 @object.Render();
             } 
             
@@ -49,8 +50,9 @@ namespace ProjektSW_Team.Rooms
         public override void Update()
         {
             Canvas?.Update();
-            foreach (IObject @object in Objects)
+            for (int i = 0; i < Objects.Count; i++)
             {
+                IObject @object = Objects[i];
                 @object.Update();
             }
 

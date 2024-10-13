@@ -32,6 +32,7 @@ namespace ProjektSW_Team
             Rooms.Add(typeof(Room3_1), new Room3_1());
             Rooms.Add(typeof(Room4), new Room4());
             Rooms.Add(typeof(Room3_2), new Room3_2());
+            Rooms.Add(typeof(BossRoom), new BossRoom());
             Instance = this;
 
             Player = new Player();

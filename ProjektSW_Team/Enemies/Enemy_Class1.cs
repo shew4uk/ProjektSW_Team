@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProjektSW_Team
+namespace ProjektSW_Team.Enemies
 {
     internal class Enemy_Class1 : Element
     {
@@ -35,7 +35,7 @@ namespace ProjektSW_Team
             if (Time.NowSeconds - Moving > 0.8)
             {
                 Moving = Time.NowSeconds;
-                if (EnemyX > Player.Position.X + 4 ) 
+                if (EnemyX > Player.Position.X + 4)
                 {
                     EnemyX += 1;
                 }
@@ -54,7 +54,7 @@ namespace ProjektSW_Team
             }
         }
 
-        
+
 
         protected override void OnRender()
         {
