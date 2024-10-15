@@ -25,12 +25,19 @@ namespace ProjektSW_Team.Rooms
             Objects.Add(new Door() { Position = new Point(8, 0), Size = new Size(4, 1), Room = typeof(Room1), PlayerX = 9 , PlayerY = 18});
             Objects.Add(new Door() { Position = new Point(8, 19), Size = new Size(4, 1), Room = typeof(Room3), PlayerX = 29, PlayerY = 1 });
             Objects.Add(new Door() { Position = new Point(40, 13), Size = new Size(2, 3), Room = typeof(Room3_1), PlayerX = 2, PlayerY = 5 });
-            Objects.Add(new Trap() { Position = new Point(7, 5), Size = new Size(2, 1) });
-            Objects.Add(new Trap() { Position = new Point(30,11), Size = new Size(2, 1) });
-            Objects.Add(new Trap() { Position = new Point(14, 9), Size = new Size(2, 1) });
-            Objects.Add(new Trap() { Position = new Point(9, 12), Size = new Size(2, 1) });
-            Objects.Add(new Trap() { Position = new Point(16,17), Size = new Size(2, 1) });
-            Objects.Add(new Trap() { Position = new Point(22,16), Size = new Size(2, 1) });
+
+            Objects.Add(new Trap() { Position = new Point(2, 1), Size = new Size(2, 1) });
+            Objects.Add(new Trap() { Position = new Point(17, 1), Size = new Size(2, 1) });
+
+            
+            
+
+            Objects.Add(new Trap() { Position = new Point(9, 13), Size = new Size(2, 1) });
+
+            Objects.Add(new Trap() { Position = new Point(2, 18), Size = new Size(2, 1) });
+            Objects.Add(new Trap() { Position = new Point(38,10), Size = new Size(2, 1) });
+            Objects.Add(new Trap() { Position = new Point(38, 18), Size = new Size(2, 1) });
+
             Objects.Add(new Enemy_Class { Position = new Point(8, 18), Size = new Size(1, 1) });
             Objects.Add(new Enemy_Class { Position = new Point(12, 18), Size = new Size(1, 1) });
             Objects.Add(new Enemy_Class { Position = new Point(38, 14), Size = new Size(1, 1) });

@@ -18,7 +18,7 @@ namespace ProjektSW_Team.Rooms
             Objects.Add(new Enemy_Class { Position = new Point(9, 18), Size = new Size(1, 1) });
             Objects.Add(new Enemy_Class { Position = new Point(6, 18), Size = new Size(1, 1) });
             Objects.Add(new Enemy_Class { Position = new Point(12, 18), Size = new Size(1, 1) });
-
+            Objects.Add(new Trap() { Position = new Point(1, 1), Size = new Size(2, 1) });
         }
         public override void DrawRoom(Canvas Rooms)
         {
