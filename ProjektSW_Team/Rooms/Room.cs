@@ -55,7 +55,7 @@ namespace ProjektSW_Team.Rooms
                 IObject @object = Objects[i];
                 @object.Update();
             }
-
+            Objects.RemoveAll(Obj => Obj.ShouldBeRemoved);
         }
 
 

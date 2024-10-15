@@ -1,12 +1,6 @@
 ﻿using FastConsole.Engine.Core;
 using FastConsole.Engine.Elements;
-using ProjektSW_Team.Rooms;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ProjektSW_Team
 {
@@ -29,7 +23,7 @@ namespace ProjektSW_Team
             Health = 100;
             MaxHealth = 100;
             Damage = 15;
-            Sheild_Hp = 1;
+            
             IsAlive = true;
             Position = new Point(5, 5);
 
@@ -72,6 +66,7 @@ namespace ProjektSW_Team
             }
         }
 
+        public double CoolDown { get; private set; }
 
         public void DisplayInfo()
         {
@@ -105,19 +100,29 @@ namespace ProjektSW_Team
                         break;
 
                     case ConsoleKey.W:
-                        
+                        Ilumination(new Point(0, -1));
                         break;
                     case ConsoleKey.A:
-
+                        Ilumination(new Point(-1, 0));
                         break;
                     case ConsoleKey.D:
-
+                        Ilumination(new Point(1, 0));
                         break;
                     case ConsoleKey.S:
-
+                        Ilumination(new Point(0, 1));
                         break;
                 }
             }
+        }
+
+        public void Ilumination(Point Direction)
+        {
+            if (Time.NowSeconds - CoolDown > 0.5)
+            {
+                CoolDown = Time.NowSeconds;
+                TheWorld.Instance.CurrentRoom.Objects.Add(new BulletObject { Direction = Direction, Position = Position });
+            }
+            
         }
 
         protected override void OnRender()

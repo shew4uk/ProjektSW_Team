@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ProjektSW_Team.Enemies
 {
-    internal class Enemy_Class : Element, IObject
+    internal class Enemy_Class : Element, IObject, IBecomeDamadge
     {
         public int Enemy_Hp;
         public int Enemy_Damage;
@@ -24,6 +24,7 @@ namespace ProjektSW_Team.Enemies
         public bool CanWalk { get; set; } = true;
         public double LastHit { get; private set; }
         public double LastMove { get; private set; }
+        public bool ShouldBeRemoved => Enemy_Hp < 0;
 
         public void Action()
         {
@@ -35,12 +36,16 @@ namespace ProjektSW_Team.Enemies
             }
         }
 
+        public void BecomeDamadge(int Damadge)
+        {
+            Enemy_Hp -= Damadge;
+        }
         public override void Update()
         {
 
             _canvas.Position = Position;
             _canvas.CanvasSize = Size;
-            _canvas.Fill(Color.Red);
+            _canvas.Fill(Color.DarkRed);
 
             _canvas.Update();
 

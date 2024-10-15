@@ -15,7 +15,7 @@ namespace ProjektSW_Team.Rooms
             Objects.Add(new Door() { Position = new Point(8, 0), Size = new Size(4, 1), Room = typeof(Room4), PlayerX = 9, PlayerY = 18 });
             //Objects.Add(new Enemy_Class { Position = new Point(10, 20),Size = new Size(1,1) });
             Objects.Add(new Cocoon { Position = new Point(8, 15), Size = new Size(1, 1) });
-            Objects.Add(new BlobBoss { Position = new Point(10, 20), Size = Size });
+            Objects.Add(new BlobBoss { Position = new Point(10, 20), Size = new Size(10,5) });
         }
         public override void DrawRoom(Canvas Rooms)
         {

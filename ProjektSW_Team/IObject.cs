@@ -13,6 +13,8 @@ namespace ProjektSW_Team
         Size Size { get; set; }
         bool CanWalk { get; set; }
 
+        bool ShouldBeRemoved {get;}
+
         void Action();
         void Update();
         void Render();

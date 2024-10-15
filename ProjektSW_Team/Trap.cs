@@ -15,6 +15,9 @@ namespace ProjektSW_Team
         public Canvas Canvas { get; set; }
         
         public bool CanWalk { get; set; } = true;
+
+        public bool ShouldBeRemoved => false;
+
         private double LastHit;
 
         protected override void OnRender()

@@ -16,6 +16,7 @@ namespace ProjektSW_Team
         public Type Room {  get; set; }
         public bool CanWalk { get; set; } = true;
 
+        public bool ShouldBeRemoved => false;
 
         public override void Update()
         {
