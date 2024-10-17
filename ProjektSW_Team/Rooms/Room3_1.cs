@@ -21,14 +21,15 @@ namespace ProjektSW_Team.Rooms
             Objects.Add(new Enemy_Class { Position = new Point(38, 9), Size = new Size(1, 1) });
             Objects.Add(new Enemy_Class { Position = new Point(38, 6), Size = new Size(1, 1) });
             Objects.Add(new Enemy_Class { Position = new Point(38, 3), Size = new Size(1, 1) });
-            Objects.Add(new Trap() { Position = new Point(7, 5), Size = new Size(2, 1) });
-            Objects.Add(new Trap() { Position = new Point(27, 10), Size = new Size(2, 1) });
-            Objects.Add(new Trap() { Position = new Point(13, 9), Size = new Size(2, 1) });
-            Objects.Add(new Trap() { Position = new Point(8, 12), Size = new Size(2, 1) });
-            Objects.Add(new Trap() { Position = new Point(15, 4), Size = new Size(2, 1) });
-            Objects.Add(new Trap() { Position = new Point(20, 16), Size = new Size(2, 1) });
-            Objects.Add(new Trap() { Position = new Point(22, 11), Size = new Size(2, 1) });
-            Objects.Add(new Trap() { Position = new Point(9, 17), Size = new Size(2, 1) });
+            Objects.Add(new Trap() { Position = new Point(2, 1), Size = new Size(2, 1) });
+            Objects.Add(new Trap() { Position = new Point(38, 18), Size = new Size(2, 1) });
+            Objects.Add(new Trap() { Position = new Point(38, 1), Size = new Size(2, 1) });
+            Objects.Add(new Trap() { Position = new Point(2, 18), Size = new Size(2, 1) });
+            Objects.Add(new Obstacle(new Size(2, 1), Color.SaddleBrown) { Position = new Point(9, 5) });
+            Objects.Add(new Obstacle(new Size(2, 1), Color.SaddleBrown) { Position = new Point(9, 14) });
+            Objects.Add(new Obstacle(new Size(2, 1), Color.SaddleBrown) { Position = new Point(29, 14) });
+            Objects.Add(new Obstacle(new Size(2, 1), Color.SaddleBrown) { Position = new Point(29, 5) });
+            Objects.Add(new Obstacle(new Size(2, 1), Color.SaddleBrown) { Position = new Point(19, 9) });
         }
 
         public override void DrawRoom(Canvas Rooms)

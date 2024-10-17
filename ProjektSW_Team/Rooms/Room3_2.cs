@@ -17,10 +17,14 @@ namespace ProjektSW_Team.Rooms
             Objects.Add(new Door() { Position = new Point(0, 4), Size = new Size(2, 3), Room = typeof(Room3), PlayerX = 38, PlayerY = 5 });
             Objects.Add(new Enemy_Class { Position = new Point(12, 14), Size = new Size(1, 1) });
             Objects.Add(new Enemy_Class { Position = new Point(6, 14), Size = new Size(1, 1) });
-            Objects.Add(new Trap() { Position = new Point(8, 6), Size = new Size(2, 1) });
-            Objects.Add(new Trap() { Position = new Point(8, 7), Size = new Size(2, 1) });
-            Objects.Add(new Trap() { Position = new Point(10, 6), Size = new Size(2, 1) });
-            Objects.Add(new Trap() { Position = new Point(10, 7), Size = new Size(2, 1) });
+            Objects.Add(new Trap() { Position = new Point(2, 1), Size = new Size(2, 1) });
+            Objects.Add(new Trap() { Position = new Point(18, 14), Size = new Size(2, 1) });
+            Objects.Add(new Trap() { Position = new Point(18, 1), Size = new Size(2, 1) });
+            Objects.Add(new Trap() { Position = new Point(2, 14), Size = new Size(2, 1) });
+            Objects.Add(new Obstacle(new Size(2, 1), Color.SaddleBrown) { Position = new Point(9, 6) });
+            Objects.Add(new Obstacle(new Size(2, 1), Color.SaddleBrown) { Position = new Point(9, 7) });
+            Objects.Add(new Obstacle(new Size(2, 1), Color.SaddleBrown) { Position = new Point(11, 6) });
+            Objects.Add(new Obstacle(new Size(2, 1), Color.SaddleBrown) { Position = new Point(11, 7) });
         }
         public override void DrawRoom(Canvas Rooms)
         {
