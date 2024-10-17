@@ -13,6 +13,7 @@ namespace ProjektSW_Team.Enemies
     {
         public int Enemy_Hp;
         public int Enemy_Damage;
+        public int Cocoon_Picker;
         private Canvas _canvas;
         public BlobBoss()
         {
@@ -20,6 +21,7 @@ namespace ProjektSW_Team.Enemies
             Enemy_Damage = 10;
             _canvas = new Canvas(new Size(5, 5));
             _canvas.Fill(Color.SaddleBrown);
+            Cocoon_Picker = Random.Shared.Next(1,3);
         }
 
         public bool CanWalk { get; set; } = true;
@@ -54,12 +56,18 @@ namespace ProjektSW_Team.Enemies
             {
                 LastMove = Time.NowSeconds;
                 Player player = TheWorld.Instance.Player;
-                if (Cocoon == null || Cocoon.ShouldBeRemoved == true)
+                if (Cocoon == null || Cocoon.ShouldBeRemoved == true && Cocoon_Picker == 2)
                 {
                     TheWorld.Instance.CurrentRoom.Objects.Add(Cocoon = new Cocoon { Position = new Point(16, 15), Size = new Size(1, 1) });
                 }
-                
-
+                else if (Cocoon == null || Cocoon.ShouldBeRemoved == true && Cocoon_Picker == 1)
+                {
+                    TheWorld.Instance.CurrentRoom.Objects.Add(Cocoon = new Cocoon { Position = new Point(8, 15), Size = new Size(1, 1) });
+                }
+                else
+                {
+                    Cocoon_Picker = Random.Shared.Next(1, 3);
+                }
             }
         }
         protected override void OnRender()

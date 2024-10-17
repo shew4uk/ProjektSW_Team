@@ -8,15 +8,13 @@ using System.Threading.Tasks;
 
 namespace ProjektSW_Team.Rooms
 {
-    internal class BossRoom : Room
+    internal class BossRoom_1 : Room
     {
-        public BossRoom() : base()
+        public BossRoom_1() : base()
         {
-            Objects.Add(new Door() { Position = new Point(8, 0), Size = new Size(4, 1), Room = typeof(Room4), PlayerX = 9, PlayerY = 18 });
-            Objects.Add(new Door() { Position = new Point(37, 8), Size = new Size(1, 4), Room = typeof(BossRoom_1), PlayerX = 48, PlayerY = 8 });
+            Objects.Add(new Door() { Position = new Point(37, 8), Size = new Size(1, 4), Room = typeof(BossRoom), PlayerX = 14, PlayerY = 8 });
             //Objects.Add(new Enemy_Class { Position = new Point(10, 20),Size = new Size(1,1) });
-            Objects.Add(new Cocoon { Position = new Point(8, 15), Size = new Size(1, 1) });
-            Objects.Add(new BlobBoss { Position = new Point(10, 20), Size = new Size(5,5) });
+            Objects.Add(new DashingBoss { Position = new Point(10, 20), Size = new Size(5, 5) });
         }
         public override void DrawRoom(Canvas Rooms)
         {

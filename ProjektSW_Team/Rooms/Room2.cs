@@ -25,6 +25,7 @@ namespace ProjektSW_Team.Rooms
             Objects.Add(new Door() { Position = new Point(8, 0), Size = new Size(4, 1), Room = typeof(Room1), PlayerX = 9 , PlayerY = 18});
             Objects.Add(new Door() { Position = new Point(8, 19), Size = new Size(4, 1), Room = typeof(Room3), PlayerX = 29, PlayerY = 1 });
             Objects.Add(new Door() { Position = new Point(40, 13), Size = new Size(2, 3), Room = typeof(Room3_1), PlayerX = 2, PlayerY = 5 });
+<<<<<<< HEAD
 
             Objects.Add(new Trap() { Position = new Point(2, 1), Size = new Size(2, 1) });
             Objects.Add(new Trap() { Position = new Point(17, 1), Size = new Size(2, 1) });
@@ -38,10 +39,20 @@ namespace ProjektSW_Team.Rooms
             Objects.Add(new Trap() { Position = new Point(38,10), Size = new Size(2, 1) });
             Objects.Add(new Trap() { Position = new Point(38, 18), Size = new Size(2, 1) });
 
+=======
+            Objects.Add(new Trap() { Position = new Point(38, 18), Size = new Size(2, 1) });
+            Objects.Add(new Trap() { Position = new Point(38,10), Size = new Size(2, 1) });
+            Objects.Add(new Trap() { Position = new Point(2, 18), Size = new Size(2, 1) });
+            Objects.Add(new Trap() { Position = new Point(2, 1), Size = new Size(2, 1) });
+            Objects.Add(new Trap() { Position = new Point(17, 1), Size = new Size(2, 1) });
+>>>>>>> 0bc29b8d729eacc7af754a9f262ca64d1bb839b2
             Objects.Add(new Enemy_Class { Position = new Point(8, 18), Size = new Size(1, 1) });
             Objects.Add(new Enemy_Class { Position = new Point(12, 18), Size = new Size(1, 1) });
             Objects.Add(new Enemy_Class { Position = new Point(38, 14), Size = new Size(1, 1) });
             Objects.Add(new Enemy_Class { Position = new Point(38, 16), Size = new Size(1, 1) });
+            Objects.Add(new Obstacle(new Size(2, 1), Color.SaddleBrown) { Position = new Point(9, 5) });
+            Objects.Add(new Obstacle(new Size(2, 1), Color.SaddleBrown) { Position = new Point(9, 14) });
+            Objects.Add(new Obstacle(new Size(2, 1), Color.SaddleBrown) { Position = new Point(29, 14) });
         }
         public override void DrawRoom(Canvas Rooms)
         {

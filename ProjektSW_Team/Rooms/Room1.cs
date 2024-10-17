@@ -21,7 +21,7 @@ namespace ProjektSW_Team.Rooms
 
             Objects.Add(new Enemy_Class { Position = new Point(10, 20), Size = new Size(1, 1) });
 
-            Objects.Add(new Enemy_Class { Position = new Point(9, 12), Size = new Size(1, 1) });
+            Objects.Add(new Enemy_Class{ Position = new Point(9, 12), Size = new Size(1, 1) });
 
 
 
