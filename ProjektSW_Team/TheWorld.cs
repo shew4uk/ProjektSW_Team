@@ -9,9 +9,10 @@ using System.Threading.Tasks;
 
 namespace ProjektSW_Team
 {
+
     internal class TheWorld : Element
     {
-
+        
         private Dictionary<Type, Room> Rooms = new Dictionary<Type, Room>();
         public Room CurrentRoom { get; set; }
         public Player Player { get; set; }
@@ -46,6 +47,7 @@ namespace ProjektSW_Team
         }
         public override void Update()
         {
+            Console.CursorVisible = false;
 
             CurrentRoom.Update();
             Player.Update();
