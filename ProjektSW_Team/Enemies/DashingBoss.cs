@@ -26,7 +26,7 @@ namespace ProjektSW_Team.Enemies
         public bool CanWalk { get; set; } = true;
         public double LastHit { get; private set; }
         public double LastMove { get; private set; }
-        public bool ShouldBeRemoved => Enemy_Hp <= 0;
+        public bool ShouldBeRemoved => Enemy_Hp < 0;
         public void Action()
         {
 
@@ -43,7 +43,7 @@ namespace ProjektSW_Team.Enemies
         }
         public override void Update()
         {
-            if (Enemy_Hp < 0)
+            if (Enemy_Hp <= 0)
             {
                 IsDead = true;
             }

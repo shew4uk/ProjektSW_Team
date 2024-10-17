@@ -12,9 +12,9 @@ namespace ProjektSW_Team.Rooms
     {
         public BossRoom_1() : base()
         {
-            Objects.Add(new Door() { Position = new Point(49, 8), Size = new Size(1, 4), Room = typeof(BossRoom), PlayerX = 1, PlayerY = 10 });
+            
             //Objects.Add(new Enemy_Class { Position = new Point(10, 20),Size = new Size(1,1) });
-            Objects.Add(TheWorld.Instance.dashingBoss = new DashingBoss { Position = new Point(10, 20), Size = new Size(10, 5) });
+            Objects.Add(TheWorld.Instance.dashingBoss = new DashingBoss { Position = new Point(10, 20), Size = new Size(5, 5) });
         }
         public override void DrawRoom(Canvas Rooms)
         {

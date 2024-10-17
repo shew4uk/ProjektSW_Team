@@ -31,7 +31,7 @@ namespace ProjektSW_Team.Enemies
         public bool CanWalk { get; set; } = true;
         public double LastHit { get; private set; }
         public double LastMove { get; private set; }
-        public bool ShouldBeRemoved => Enemy_Hp <= 0;
+        public bool ShouldBeRemoved => Enemy_Hp < 0;
         public Cocoon Cocoon { get; set; } 
 
         public void Action()
