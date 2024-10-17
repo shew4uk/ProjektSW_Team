@@ -1,4 +1,5 @@
 ﻿using FastConsole.Engine.Elements;
+using ProjektSW_Team.Enemies;
 using ProjektSW_Team.Rooms;
 using System;
 using System.Collections.Generic;
@@ -15,9 +16,12 @@ namespace ProjektSW_Team
         
         private Dictionary<Type, Room> Rooms = new Dictionary<Type, Room>();
         public Room CurrentRoom { get; set; }
-        public Player Player { get; set; }
-        public static TheWorld Instance { get; private set; }
 
+        public Player Player { get; set; }
+        public BlobBoss blobBoss { get; set; }
+        public DashingBoss dashingBoss { get; set; }
+        public static TheWorld Instance { get; private set; }
+        public static object Objects { get; private set; }
 
         public void UseTP(Door door)
         {
@@ -27,6 +31,8 @@ namespace ProjektSW_Team
         }
         public TheWorld()  // Нову кімнату сюда
         {
+            Instance = this;
+            blobBoss = blobBoss;
             Rooms.Add(typeof(Room1), new Room1());
             Rooms.Add(typeof(Room2), new Room2());
             Rooms.Add(typeof(Room3), new Room3());
@@ -48,6 +54,9 @@ namespace ProjektSW_Team
         }
         public override void Update()
         {
+            
+
+            
             Console.CursorVisible = false;
 
             CurrentRoom.Update();

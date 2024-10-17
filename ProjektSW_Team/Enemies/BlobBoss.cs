@@ -15,19 +15,23 @@ namespace ProjektSW_Team.Enemies
         public int Enemy_Damage;
         public int Cocoon_Picker;
         private Canvas _canvas;
+        public bool IsDead = false;
+        
         public BlobBoss()
         {
+            
             Enemy_Hp = 600;
             Enemy_Damage = 10;
             _canvas = new Canvas(new Size(5, 5));
             _canvas.Fill(Color.SaddleBrown);
             Cocoon_Picker = Random.Shared.Next(1,3);
+            IsDead = false;
         }
 
         public bool CanWalk { get; set; } = true;
         public double LastHit { get; private set; }
         public double LastMove { get; private set; }
-        public bool ShouldBeRemoved => Enemy_Hp < 0;
+        public bool ShouldBeRemoved => Enemy_Hp <= 0;
         public Cocoon Cocoon { get; set; } 
 
         public void Action()
@@ -47,7 +51,10 @@ namespace ProjektSW_Team.Enemies
 
         public override void Update()
         {
-
+           if (Enemy_Hp <= 0)
+            {
+                IsDead = true;
+            }
             _canvas.Position = Position;
 
             _canvas.Update();

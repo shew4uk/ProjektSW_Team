@@ -14,17 +14,19 @@ namespace ProjektSW_Team.Enemies
         public int Enemy_Hp;
         public int Enemy_Damage;
         private Canvas _canvas;
+        public bool IsDead = false;
         public DashingBoss()
         {
             Enemy_Hp = 500;
             Enemy_Damage = 10;
-            _canvas = new Canvas(new Size(1, 1));
+            _canvas = new Canvas(new Size(5, 5));
+            IsDead = false;
         }
 
         public bool CanWalk { get; set; } = true;
         public double LastHit { get; private set; }
         public double LastMove { get; private set; }
-        public bool ShouldBeRemoved => Enemy_Hp < 0;
+        public bool ShouldBeRemoved => Enemy_Hp <= 0;
         public void Action()
         {
 
@@ -41,6 +43,10 @@ namespace ProjektSW_Team.Enemies
         }
         public override void Update()
         {
+            if (Enemy_Hp < 0)
+            {
+                IsDead = true;
+            }
 
             _canvas.Position = Position;
             _canvas.CanvasSize = Size;
@@ -54,25 +60,25 @@ namespace ProjektSW_Team.Enemies
                     for (int i = 0; i < 12; i++)
                     {
                         Player player = TheWorld.Instance.Player;
-                        if (Position.X < player.Position.X)
+                        if (Position.X + 4 < player.Position.X)
                         {
                             Point position = Position;
                             position.X++;
                             Position = position;
                         }
-                        else if (Position.X > player.Position.X)
+                        else if (Position.X + 4 > player.Position.X)
                         {
                             Point position = Position;
                             position.X--;
                             Position = position;
                         }
-                        if (Position.Y < player.Position.Y)
+                        if (Position.Y + 2 < player.Position.Y)
                         {
                             Point position = Position;
                             position.Y++;
                             Position = position;
                         }
-                        else if (Position.Y > player.Position.Y)
+                        else if (Position.Y + 2 > player.Position.Y)
                         {
                             Point position = Position;
                             position.Y--;

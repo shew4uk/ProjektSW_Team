@@ -18,7 +18,7 @@ namespace ProjektSW_Team.Enemies
         {
             Enemy_Hp = 60;
             Enemy_Damage = 10;
-            _canvas = new Canvas(new Size(1, 1));
+            _canvas = new Canvas(new Size(5, 5));
         }
 
         public bool CanWalk { get; set; } = true;

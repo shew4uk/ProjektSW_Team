@@ -1,4 +1,5 @@
-﻿using FastConsole.Engine.Core;
+﻿
+using FastConsole.Engine.Core;
 using FastConsole.Engine.Elements;
 using System;
 using System.Collections.Generic;

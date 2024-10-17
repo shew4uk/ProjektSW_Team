@@ -19,6 +19,8 @@ namespace ProjektSW_Team.Rooms
 
 
         public Canvas Canvas { get; set; }
+        public Room BossRoom { get; internal set; }
+
         public Room() 
         { 
             Canvas = new Canvas(new Size());
